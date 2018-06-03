@@ -1,0 +1,26 @@
+spring:
+  security:
+    user:
+      name: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: mysql
+  datasource:
+      username: root
+      password: cll123456
+      url: jdbc:mysql://127.0.0.1:3306/shiro?useSSL=false
+      driver-class-name: com.mysql.jdbc.Driver
+
+server:
+  port: 10999
+
+logging:
+  level:
+    org.springframework.security: debug
+    #org.springframework.data.jpa: debug
+
+
+
+
