@@ -1,4 +1,4 @@
-package com.cll.security.web.utls;
+package com.cll.security.web.utils;
 
 import java.io.Serializable;
 

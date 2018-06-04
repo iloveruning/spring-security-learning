@@ -1,8 +1,9 @@
 package com.cll.security.web.controller;
 
+import com.cll.security.web.common.annotation.SysLog;
 import com.cll.security.web.entity.User;
 import com.cll.security.web.repository.UserRepository;
-import com.cll.security.web.utls.R;
+import com.cll.security.web.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,12 @@ public class UserController {
         User res = userRepository.save(user);
         return R.success(res);
 
+    }
+
+    @GetMapping("/list")
+    @SysLog(appid = "#{T(com.cll.security.web.common.Constant).getAppId('userList')}",sevid = "#{#sevid}",data = "#{#returnObject.data}")
+    public R list(@RequestParam("sevid") String sevid){
+        return R.success(userRepository.findAll());
     }
 
 
