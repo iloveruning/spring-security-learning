@@ -40,8 +40,9 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    @SysLog(appid = "#{T(com.cll.security.web.common.Constant).getAppId('userList')}",sevid = "#{#sevid}",data = "#{#returnObject.data}")
-    public R list(@RequestParam("sevid") String sevid){
+    @SysLog(appid = "#{T(com.cll.security.web.common.Constant).getAppId('userList')}",sevid = "#{#sevid+'_'+#$2}",data = "#{#returnObject.data}")
+    public R list(@RequestParam("sevid") String sevid,
+                  @RequestParam("test") String test){
         return R.success(userRepository.findAll());
     }
 

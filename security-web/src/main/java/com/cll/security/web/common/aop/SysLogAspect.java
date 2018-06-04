@@ -55,7 +55,7 @@ public class SysLogAspect {
         String[] parameterNames = discoverer.getParameterNames(method);
         Object[] parameters = joinPoint.getArgs();
         for (int i = 0, l = parameterNames.length; i < l; i++) {
-            expressContext.addVariable(String.valueOf(i),parameters[i]);
+            expressContext.addVariable("$"+String.valueOf(i+1),parameters[i]);
             expressContext.addVariable(parameterNames[i], parameters[i]);
         }
 
@@ -94,7 +94,7 @@ public class SysLogAspect {
         System.out.println(save);
 
         for (int i = 0, l = parameterNames.length; i < l; i++) {
-            expressContext.removeVariable(String.valueOf(i));
+            expressContext.removeVariable("$"+String.valueOf(i+1));
             expressContext.removeVariable(parameterNames[i]);
         }
         expressContext.removeVariable("returnObject");
