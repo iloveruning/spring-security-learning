@@ -1,11 +1,15 @@
 package com.cll.security.web.common.express;
 
+import com.cll.security.web.utils.SpringContextHolder;
+import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author chenliangliang
@@ -20,10 +24,10 @@ public class SysLogExpressContext {
 
     private CllEvaluationContext context = new CllEvaluationContext();
 
-//    @PostConstruct
-//    public void init() {
-//        context.setBeanResolver(new BeanFactoryResolver(SpringContextHolder.getContext()));
-//    }
+    @PostConstruct
+    public void init() {
+        context.setBeanResolver(new BeanFactoryResolver(SpringContextHolder.getContext()));
+    }
 
 
     public void addVariable(String name, Object variable) {

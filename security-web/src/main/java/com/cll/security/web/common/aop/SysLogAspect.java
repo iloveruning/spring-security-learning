@@ -12,6 +12,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -32,6 +33,9 @@ public class SysLogAspect {
     @Autowired
     private SysLogExpressContext expressContext;
 
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
+
     private ParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
 
     @Pointcut("@annotation(com.cll.security.web.common.annotation.SysLog)")
@@ -47,6 +51,13 @@ public class SysLogAspect {
 
         Object result = joinPoint.proceed();
 
+        taskExecutor.execute(() -> handleLog(joinPoint, result, start));
+
+        return result;
+
+    }
+
+    private void handleLog(ProceedingJoinPoint joinPoint, Object result, long start) {
         int time = (int) (System.currentTimeMillis() - start);
 
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -55,11 +66,11 @@ public class SysLogAspect {
         String[] parameterNames = discoverer.getParameterNames(method);
         Object[] parameters = joinPoint.getArgs();
         for (int i = 0, l = parameterNames.length; i < l; i++) {
-            expressContext.addVariable("$"+String.valueOf(i+1),parameters[i]);
+            expressContext.addVariable("$" + String.valueOf(i + 1), parameters[i]);
             expressContext.addVariable(parameterNames[i], parameters[i]);
         }
 
-        expressContext.addVariable("returnObject",result);
+        expressContext.addVariable("returnObject", result);
         com.cll.security.web.common.annotation.SysLog log = method.getAnnotation(com.cll.security.web.common.annotation.SysLog.class);
 
         String appid = log.appid();
@@ -94,12 +105,9 @@ public class SysLogAspect {
         System.out.println(save);
 
         for (int i = 0, l = parameterNames.length; i < l; i++) {
-            expressContext.removeVariable("$"+String.valueOf(i+1));
+            expressContext.removeVariable("$" + String.valueOf(i + 1));
             expressContext.removeVariable(parameterNames[i]);
         }
         expressContext.removeVariable("returnObject");
-
-        return result;
-
     }
 }
