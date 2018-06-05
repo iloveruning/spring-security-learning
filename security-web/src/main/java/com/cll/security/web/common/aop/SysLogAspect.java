@@ -75,22 +75,20 @@ public class SysLogAspect {
 
         String appid = log.appid();
         if (StringUtils.isNotBlank(appid)) {
-            appid = expressContext.parseSpel(appid, String.class);
+            appid = expressContext.parseSpel(appid).toString();
         }
 
-        System.out.println(appid);
         String data = log.data();
         if (StringUtils.isNotBlank(data)) {
             data = expressContext.parseSpel(data).toString();
         }
-        System.out.println(data);
+
         String sevid = log.sevid();
         if (StringUtils.isNotBlank(sevid)) {
             sevid = expressContext.parseSpel(sevid).toString();
         }
-        System.out.println(sevid);
-        String level = log.level();
 
+        String level = log.level();
 
         SysLog sysLog = new SysLog();
         sysLog.setStartTime(new Date(start));

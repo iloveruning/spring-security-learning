@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -38,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         //UserDetailsService
-        http.addFilterBefore(validateCodeFilter(),UsernamePasswordAuthenticationFilter.class)
+        http.addFilterBefore(validateCodeFilter(), UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
                 .loginPage("/page/login") //登录页面
                 .loginProcessingUrl("/user/login")  //登录处理url
@@ -53,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/page/login","/user/login" ,"/page/register", "/user/register",
+                .antMatchers("/page/login", "/user/login", "/page/register", "/user/register",
                         "/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
@@ -95,10 +96,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PersistentTokenRepository tokenRepository(){
-        JdbcTokenRepositoryImpl tokenRepository=new JdbcTokenRepositoryImpl();
+    public PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
         tokenRepository.setDataSource(dataSource);
         //tokenRepository.setCreateTableOnStartup(true);
         return tokenRepository;
+    }
+
+
+    @Bean
+    public ThreadPoolTaskExecutor taskExecutor() {
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(64);
+        taskExecutor.setKeepAliveSeconds(60000);
+        return taskExecutor;
     }
 }
